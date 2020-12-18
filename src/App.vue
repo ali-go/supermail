@@ -7,7 +7,7 @@
 
 <script>
 
-import Main from 'components/content/Main.vue'
+import Main from 'components/content/main/Main.vue'
 
 export default {
   name: 'App',
