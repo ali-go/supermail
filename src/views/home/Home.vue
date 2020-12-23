@@ -3,19 +3,24 @@
     <!-- 导航栏 -->
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     <!-- 此处用自己封装的better-scroll第三方插件即scroll来接管滚动事件，注意调用时要给高度 -->
+    <!-- 选项卡 :该选项卡是为了下面滚动吸顶专门多复制的一份-->
+    <tab-control :titles="['流行','新款','精选']" class="tab-control" v-show="istabControlShow"
+                  @itemClick="itemClick" ref="tabControl1" />
+    <!-- ------------------------------------------ -->
     <scroll class="content" 
             :probe-type="3" 
             :pull-up-load="true" 
             @pullingUp="loadMore" 
             ref="scroll" @scroll="contentScroll">
       <!-- 轮播图：由于HomeSwiper组件的banners数据从父组件获取，因此此处需要动态绑定传给子组件，中间没内容可以单标签 -->
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
       <!-- 推荐信息 -->
       <recommend-view :recommends="recommends"/>
       <!-- 特色图 -->
       <feature-view/>
       <!-- 选项卡 -->
-      <tab-control :titles="['流行','新款','精选']" class="tab-control" @itemClick="itemClick"/>
+      <tab-control :titles="['流行','新款','精选']" 
+                   @itemClick="itemClick" ref="tabControl2" />
       <!-- 列表图 -->
       <goods-list :goods="listShow"></goods-list>
     </scroll>
@@ -39,7 +44,6 @@
     // 3、此为导入的其他方法
   import {getHomeMultidata,getHomeGoods} from 'network/home';//获取home二次封装的各种网络请求
 
-
   export default {
     components:{
       HomeSwiper,
@@ -61,58 +65,84 @@
           'sell':{page:0,list:[]}
         },
         currentType: 'pop',
-        isShowBackTop:false
+        isShowBackTop:false,
+        tabOffsetTop:0,
+        istabControlShow:false,
+        saveY:0
       }
     },
     computed:{
-      // 用计算属性接收长式子，该为给goods-list循环遍历生成元素的
+      // 1、tab-control点击的切换传值
       listShow(){
         return this.goods[this.currentType].list
       }
     },
     created(){//home组件创建时就获取数据,一般created生命周期函数只写网络请求，内部的处理放在methods中，这样结构清晰
-      // 1、请求多个数据
+    // 1、请求多个数据
      this.getHomeMultidata()//此处调用methods的getHomeMultidata方法，该方法内部有网络请求处理
-     
     //  2、请求商品数据
      this.getHomeGoods('pop')
      this.getHomeGoods('new')
      this.getHomeGoods('sell')
     },
+    mounted(){
+      // 1、接收事件总线刷新高度（图片每加载一次接受一次）
+      const refresh = this.debounce(this.$refs.scroll.refresh)
+      this.$bus.$on('itemImageLoad',() =>{
+        refresh()
+      })
+    },
     methods:{
-      // BackTop返回顶部事件
+    // 事件监听相关的方法-------------------
+      // 1、BackTop返回顶部事件
       backClick(){
         this.$refs.scroll.scrollTo(0,0)
       },
-      // 设置什么位置显示返回顶部组件
+      //2、设置什么位置显示返回顶部组件
       contentScroll(position){
+        // (1)判断back-top是否显示
         this.isShowBackTop = (-position.y) > 1000
+        // （2）判断滚动距离和tabControl的距离顶部距离
+        this.istabControlShow = -position.y > this.tabOffsetTop
       },
-      // 从scroll组件中接收下拉加载事件
-      loadMore(){//接收scroll传过来的上拉加载事件
-        // console.log('下拉加载');
+      //3、从scroll组件中接收下拉加载事件
+      loadMore(){
         this.getHomeGoods(this.currentType)
-        // console.log(this.currentType);
-        // this.$refs.scroll.scroll.refresh()//修复better-scroll的bug，图片吗没加载完自动确认滚动高度的bug
       },
-      // 用topcontrol点击的index来筛选为相应的pop、new、sell
+      //4、用topcontrol点击的index来筛选为相应的pop、new、sell
       itemClick(index){
         switch(index){
           case 0:
             this.currentType ='pop'
-            // console.log(this.currentType);
             break
           case 1:
             this.currentType ='new'
-            // console.log(this.currentType);
             break
           case 2:
             this.currentType ='sell'
-            // console.log(this.currentType);
             break
         }
+        this.$refs.tabControl1.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
+        this.$refs.tabControl2.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
       },
-      // 网络模块请求的方法-----------------
+      // 5、封装防抖操作（图片每加载一次就刷新高度一次性能不好，此处优化）
+      debounce(fn,delay){
+        let timer = null;
+        return function(...args){
+          if(timer){
+            clearTimeout(timer)
+            }
+          timer = setTimeout(() =>{
+            fn.apply(this,args)
+          },delay)
+        }
+      },
+      // 6、轮播图图片加载完:获取tab-control的 offsetTop
+      swiperImageLoad(){
+         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+      },
+
+    // 网络模块请求的方法-----------------
       // 1、轮播图和推荐栏数据获取
       getHomeMultidata(){
         getHomeMultidata().then(res=>{//此为轮播图具体的网络请求内容
@@ -126,13 +156,20 @@
         getHomeGoods(type,page).then(res=>{//此为处理详情列表的网络请求
           this.goods[type].list.push(...res.data.list)//把每次获取的list数据追加到原来的list数组中
           this.goods[type].page += 1//数据获取来之后要更新相应的页码信息
-         
-          this.$refs.scroll.finishPullUp()
-          // console.log(type);
-          
+          this.$refs.scroll.finishPullUp()//每次数据加载完成就调用允许继续下拉加载
         })
       }
+    },
+    // 回来时继续跳到原来的位置
+    activated(){
+      this.$refs.scroll.scrollTo(0,this.saveY)
+      this.$refs.scroll.refresh() //最好跳回来后刷新一下高度
+    },
+    //离开前保存原有的位置
+    deactivated(){
+    this.saveY = this.$refs.scroll.getScorllY()
     }
+   
   }
 </script>
 
@@ -140,7 +177,6 @@
   #home{
     position: relative;
     height: 100vh;
-    /* padding-top: 44px; */
   }
   .home-nav{
     background-color: var(--color-tint);
@@ -151,11 +187,21 @@
     z-index: 1;
   }
 
-  /* 达到top值是转为固定定位 */
-  /* .tab-control{
-    position: sticky;
+  /* 达到top值是转为固定定位！因为用来better-scroll接管滚动，因此此设置strick失效 */
+  /* 由于有 */
+  .tab-control{
+    position: relative;
     top: 44px;
-  } */
+  }
+  /* 下面这个由于better-scroll自身的问题导致不能fixed吸顶 */
+  .fixed{
+    /* 其实由于该部分不参与滚动，其实不需要固定定位，这个fixed无效 */
+    position: fixed;
+    top: 44px;
+    left: 0;
+    right: 0;
+  }
+
   /* 此处为调用scroll时给高度 */
   /* 目前发现一个bug，只要刷新过就必须先关闭调试页面重新再开调试页面滚动才有效 */
   /* 设置高度有两种方法： */

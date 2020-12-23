@@ -26,32 +26,43 @@
       }
     },
     mounted(){//用mounted来封装scroll
+      // 1、封装scroll实例
       this.scroll = new BScroll(this.$refs.wrapper,{
         click:true,//此次必须设置true不然点击事件无效
         probeType:this.probeType,//设置可以获得滚动位置,由用户决定
         pullUpLoad:this.pullUpLoad//设置允许下拉加载，由用户决定
       })//此处用给元素加ref属性的方式来通过this.$refs来获取元素唯一
 
+      // 2、设置滚动事件
       this.scroll.on('scroll',(position) => {
         // console.log(position);
         this.$emit('scroll',position)//把滚动位置传给父组件，用来设置返回顶部事件
       })
-
+        
+        // 3、设置下拉加载事件
       this.scroll.on('pullingUp',() => {
         // console.log('下拉加载');
         this.$emit('pullingUp')//把上拉加载事件传给父组件
      })
     },
     methods:{
-      // 把回到顶部的方法设置在哎scroll内，外面调用
+      // 1、滚动位置事件
       scrollTo(x, y, time=300){
-        this.scroll.scrollTo( x, y, time)
+        this.scroll && this.scroll.scrollTo( x, y, time)
       },
-      // 继续下次下拉加载
+      // 2、继续下次下拉加载
       finishPullUp(){
-        this.scroll.finishPullUp()//设置下一次也能够上拉加载,要放在方法中，然后等home加载完一页再调用该方法启动下一次下拉加载
-      }                 
-
+        this.scroll && this.scroll.finishPullUp()//设置下一次也能够上拉加载,要放在方法中，然后等home加载完一页再调用该方法启动下一次下拉加载
+      } ,                
+      // 3、设置页面高度刷新事件
+      refresh(){
+        this.scroll && this.scroll.refresh()
+        // console.log('-----------');
+      },
+      // 4、获取y坐标，用于页面跳转保存原位置
+      getScorllY(){
+        return this.scroll ? this.scroll.y :0
+      }
     }
 
   }

@@ -5,7 +5,7 @@
         <!-- 轮播图数据获取来其实是一个跳转链接，地址是获取的数据中link的地址,注意动态绑定 -->
         <a :href="item.link">
           <!-- 具体的图片为获取的轮播图的image中的图片地址,注意动态绑定-->
-          <img :src="item.image" alt="">
+          <img :src="item.image" alt="" @load="imageLoad">
         </a>
       </SwiperItem>
     </Swiper>
@@ -25,6 +25,11 @@ export default {
       default(){//给一个默认值，因为当从父元素获取的类型是数组和对象时，默认值default必须是函数
         return []
       }
+    }
+  },
+  methods:{
+    imageLoad(){
+      this.$emit('swiperImageLoad')
     }
   }
 }

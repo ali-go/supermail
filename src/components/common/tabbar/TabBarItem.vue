@@ -29,6 +29,7 @@ export default {
  },
   methods:{
     itemClick(){
+      if(this.$route.path !== this.path)
       this.$router.push(this.path)//这个跳转的路径我们希望从上层接收过来
     }
   },
