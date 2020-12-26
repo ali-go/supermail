@@ -13,7 +13,9 @@
             @pullingUp="loadMore" 
             ref="scroll" @scroll="contentScroll">
       <!-- 轮播图：由于HomeSwiper组件的banners数据从父组件获取，因此此处需要动态绑定传给子组件，中间没内容可以单标签 -->
-      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad" 
+                    v-if="banners.length > 0"/> 
+                    <!-- v-if="banners.length > 0"是为了防止数据加载过慢导致轮播图不能滚动 -->
       <!-- 推荐信息 -->
       <recommend-view :recommends="recommends"/>
       <!-- 特色图 -->
@@ -87,6 +89,7 @@
     },
     mounted(){
       // 1、接收事件总线刷新高度（图片每加载一次接受一次）
+      
       const refresh = this.debounce(this.$refs.scroll.refresh)
       this.$bus.$on('itemImageLoad',() =>{
         refresh()
@@ -180,6 +183,7 @@
   }
   .home-nav{
     background-color: var(--color-tint);
+    color: var( --color-background);
     position: fixed;
     left: 0;
     top: 0;

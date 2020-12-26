@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-list-item">
+  <div class="goods-list-item" @click="listItem">
     <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-list-item-text">
       <p class="title">{{goodsItem.title}}</p>
@@ -23,6 +23,11 @@
       // 1、发送事件总线，当图片每加载一次就发送一次
       imageLoad(){
       this.$bus.$emit('itemImageLoad')
+      },
+      // 2、点击跳转详情页
+      listItem(){
+        this.$router.push('/detail/' + this.goodsItem.iid)
+        // console.log(this.goodsItem);
       }
     }
   }
