@@ -1,5 +1,5 @@
 <template>
-  <nav-bar>
+  <nav-bar class="nav-bar">
     <div slot="left" >
       <img src="~assets/img/common/back.svg" alt="" class="back-icon" @click="back">
     </div>
@@ -26,6 +26,7 @@
     methods:{
       titleClick(index){
         this.currertIndex = index
+        this.$emit('tabClick',index)
       },
       back(){
         this.$router.back()
@@ -35,6 +36,7 @@
 </script>
 
 <style scoped>
+  
   .title{
     display: flex;
     /* background-color: pink; */

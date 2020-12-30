@@ -25,6 +25,9 @@
         </p>
       </div>
     </div>
+    <div class="shop-bottom">
+      <div class="enter-shop">进店逛逛</div>
+    </div>
   </div>
 </template>
 
@@ -72,9 +75,9 @@
 
 <style scoped>
   .detail-shop-info{
-    height: 1000px;
-    /* 等下删除 */
-    margin: 0 10px;
+    padding: 30px 10px;
+    border-top: 4px solid #eee;
+    border-bottom: 4px solid #eee;
   }
   .shop-name{
     margin: 30px 0;
@@ -97,7 +100,6 @@
     flex: 1;
     display: flex;
     font-size: 18px;
-    /* justify-content: space-around; */
     align-items: center;
     padding: 10px 0;
 
@@ -151,6 +153,19 @@
 
   .describe .isBetter{
     color: #fff;
+  }
+  
+  .shop-bottom{
+    margin-top:25px;
+    text-align: center;
+  }
+  .enter-shop{
+    width: 40%;
+    margin: 0 auto;
+    padding: 3px 0;
+    border-radius: 10px;
+    background-color: #eee;
+    font-size: 14px;
   }
 
 </style>

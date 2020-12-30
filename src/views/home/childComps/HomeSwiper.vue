@@ -1,7 +1,7 @@
 <template>
    <Swiper>
       <!-- 用v-for遍历轮播图数量来动态创建组件数 -->
-      <SwiperItem v-for="(item,index) in banners" :key="index.item">
+      <SwiperItem v-for="(item,index) in banners" :key="index.item" >
         <!-- 轮播图数据获取来其实是一个跳转链接，地址是获取的数据中link的地址,注意动态绑定 -->
         <a :href="item.link">
           <!-- 具体的图片为获取的轮播图的image中的图片地址,注意动态绑定-->
@@ -27,9 +27,17 @@ export default {
       }
     }
   },
+  data(){
+    return {
+      isLoad:false
+    }
+  },
   methods:{
     imageLoad(){
-      this.$emit('swiperImageLoad')
+      if(!this.isLoad){
+        this.$emit('swiperImageLoad')
+        this.isLoad = true
+      }
     }
   }
 }

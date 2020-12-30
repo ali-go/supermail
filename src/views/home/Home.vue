@@ -43,8 +43,9 @@
   import GoodsList from 'components/content/goods/GoodsList' //导入GoodsList组件
   import Scroll from 'components/common/scroll/Scroll'//导入封装第三方插件better-scroll封装后的Scroll组件
   import BackTop from 'components/content/backtop/BackTop'//导入返回顶部组件
-    // 3、此为导入的其他方法
+  // 3、此为导入的其他方法
   import {getHomeMultidata,getHomeGoods} from 'network/home';//获取home二次封装的各种网络请求
+  import {debounce} from 'common/utils'//导入防抖动函数debounce
 
   export default {
     components:{
@@ -89,12 +90,14 @@
     },
     mounted(){
       // 1、接收事件总线刷新高度（图片每加载一次接受一次）
-      
-      const refresh = this.debounce(this.$refs.scroll.refresh)
+      const refresh = debounce(this.$refs.scroll.refresh,200) //此为唯一一次执行debance函数
       this.$bus.$on('itemImageLoad',() =>{
         refresh()
       })
     },
+    // deactivated(){
+    //   this.$bus.$off('itemImageLoad')
+    // },
     methods:{
     // 事件监听相关的方法-------------------
       // 1、BackTop返回顶部事件
@@ -129,20 +132,24 @@
         this.$refs.tabControl2.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
       },
       // 5、封装防抖操作（图片每加载一次就刷新高度一次性能不好，此处优化）
-      debounce(fn,delay){
-        let timer = null;
-        return function(...args){
-          if(timer){
-            clearTimeout(timer)
-            }
-          timer = setTimeout(() =>{
-            fn.apply(this,args)
-          },delay)
-        }
-      },
+      // (此处代码封装到utils.js中了，因为多地方会调用，复用性)
+      // debounce(fn,delay){
+      //   let timer = null;
+      //   return function(...args){
+      //     if(timer){
+      //       clearTimeout(timer)
+      //       }
+      //     timer = setTimeout(() =>{
+      //       fn.apply(this,args)
+      //     },delay)
+      //   }
+      // },
+
+
       // 6、轮播图图片加载完:获取tab-control的 offsetTop
       swiperImageLoad(){
-         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;//轮播图加载出来再获取tabcontrol的offsetTop
+         this.$refs.scroll.refresh();//轮播图加载出来再刷新一下scroll的滚动高度
       },
 
     // 网络模块请求的方法-----------------
@@ -151,6 +158,7 @@
         getHomeMultidata().then(res=>{//此为轮播图具体的网络请求内容
           this.banners = res.data.banner.list;//把获取的轮播图数据赋值到data中的banners
           this.recommends = res.data.recommend.list;//把推荐栏数据赋值给data中的recommends
+          // console.log(res);
       })
      },
     //  2、列表图的多种数据的获取
@@ -171,8 +179,11 @@
     //离开前保存原有的位置
     deactivated(){
     this.saveY = this.$refs.scroll.getScorllY()
+    // 离开首页后scroll停止根据图片加载刷新高度
+    // （因为复用同样组件的goodlistitem,必须离开home时停止，否则在详情页加载也会刷新home页的高度不利于性能）
+    this.$bus.$off('itemImageLoad')
+
     }
-   
   }
 </script>
 

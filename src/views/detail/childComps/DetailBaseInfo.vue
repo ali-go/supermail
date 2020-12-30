@@ -12,24 +12,11 @@
       <span>{{goods.services[goods.services.length - 1].name}}</span>
     </div>
     <div class="info-package">
-      <!-- <span v-for="(item,index) in goods.services" :key="index.item">
-        <img v-if="item.icon" :src="item.icon" alt="" >
-        {{item.name}}
-      </span> -->
       <span v-for="index in goods.services.length - 1" :key="index">
         <img v-if="goods.services[index-1].icon" :src="goods.services[index-1].icon" alt="" >
         {{goods.services[index-1].name}}
       </span>
-      <!-- <span>
-        <img :src="goods.services[goods.services.length - 3].icon" alt="">
-        {{goods.services[goods.services.length - 3].name}}
-      </span>
-      <span>
-        <img :src="goods.services[goods.services.length - 2].icon" alt="">
-        {{goods.services[goods.services.length - 2].name}}
-      </span> -->
     </div>
-    <div class="border-bottom"></div>
   </div>
 
 </template>
@@ -38,7 +25,6 @@
   export default {
     data(){
       return{
-      
       }
     },
     methods:{
@@ -56,8 +42,7 @@
       descColor(){
         return {backgroundColor:this.goods.descColor}
       }
-    },
-    
+    }
   }
 </script>
 
@@ -109,29 +94,14 @@
     text-align: right;
   }
   .info-package{
-    /* display: flex; */
-    /* flex-wrap: wrap; */
     margin: 25px 0;
     font-size: 14px;
   }
   .info-package span{
-    /* flex: 1; */
-    /* text-align: center; */
     margin-right: 5px;
   }
-  /* .info-package span:first-child{
-    text-align: left;
-  }
-  .info-package span:last-child{
-    text-align: right;
-  } */
   .info-package img{
     width: 12px;
     height: 12px;
-  }
-  .border-bottom{
-    height: 4px;
-    margin: 0 -8px;
-    background-color: #eee;
   }
 </style>

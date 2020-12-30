@@ -9,6 +9,17 @@ export function getDetail(iid) {
     })
 }
 
+// 推荐信息在不同的url内
+//  获取推荐信息的数据
+export function getRecommends() {
+    return request({
+        url: '/recommend'
+    })
+}
+
+
+
+
 // 由于有些数据不是放在一起，需要从多个地方获取，但是我们为了效率，
 // 提取之后放在一个变量中进行转储，因此此处用es6语法中的创建类来保存
 // 一个组件中需要从不同位置提取的数据，放在类的属性中
@@ -33,5 +44,15 @@ export class Shop {
         this.sells = shopInfo.cSells;
         this.goods = shopInfo.cGoods;
         this.score = shopInfo.score;
+        this.shopUrl = shopInfo.shopUrl;
+    }
+}
+
+// 3、店铺尺码信息获取
+export class GoodsParam {
+    constructor(info, rule) {
+        this.info = info.set; //一些参数信息
+        this.sizes = rule.tables; //尺码信息
+        this.images = info.images ? info.images : ""
     }
 }
