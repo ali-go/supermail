@@ -1,7 +1,10 @@
 // 导入debounce
 import { debounce } from './utils'
+import { HIGH_BACK } from './const'
+import BackTop from 'components/content/backtop/BackTop' //导入返回顶部组件
 
 // 公共代码的mixin混入
+// 1、关于refresh的防抖
 export const itemLinstnerMinxin = {
     data() {
         return {
@@ -16,5 +19,25 @@ export const itemLinstnerMinxin = {
             this.newFresh()
         }
         this.$bus.$on('itemImageLoad', this.itemImgListener)
+    }
+}
+
+// 2、关于返回顶部按钮
+export const backTopMinxin = {
+    components: {
+        BackTop
     },
+    data() {
+        return {
+            isShowBackTop: false,
+        }
+    },
+    methods: {
+        backClick() {
+            this.$refs.scroll.scrollTo(0, 0, 300)
+        },
+        showBackTop(position) {
+            this.isShowBackTop = (-position.y) > HIGH_BACK
+        },
+    }
 }

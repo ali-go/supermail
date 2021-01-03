@@ -32,7 +32,8 @@
       },
       // 2、点击跳转详情页
       listItem(){
-        this.$router.push('/detail/' + this.goodsItem.iid)
+        this.$router.push('/detail/' + (this.goodsItem.iid || this.goodsItem.item_id))
+        //this.goodsItem.item_id为detail页面的推荐图的id获取，但是那些图目前还没数据，因此无法跳转渲染页面
         // console.log(this.goodsItem);
       }
     }

@@ -42,10 +42,12 @@
   import TabControl from 'components/content/tabControl/TabControl'//导入TabControl组件
   import GoodsList from 'components/content/goods/GoodsList' //导入GoodsList组件
   import Scroll from 'components/common/scroll/Scroll'//导入封装第三方插件better-scroll封装后的Scroll组件
-  import BackTop from 'components/content/backtop/BackTop'//导入返回顶部组件
+  // import BackTop from 'components/content/backtop/BackTop'//导入返回顶部组件
   // 3、此为导入的其他方法
   import {getHomeMultidata,getHomeGoods} from 'network/home';//获取home二次封装的各种网络请求
   import {debounce} from 'common/utils'//导入防抖动函数debounce
+  import {HIGH_BACK} from 'common/const' //导入返回顶部的显示时高度，固定常量
+  import {backTopMinxin} from 'common/mixin' //导入混入的代码
 
   export default {
     components:{
@@ -56,7 +58,7 @@
       TabControl,
       GoodsList,
       Scroll,
-      BackTop
+      // BackTop //放在混入注册了
     },
     data(){
       return{
@@ -68,12 +70,13 @@
           'sell':{page:0,list:[]}
         },
         currentType: 'pop',
-        isShowBackTop:false,
+        // isShowBackTop:false,//放在混入中了
         tabOffsetTop:0,
         istabControlShow:false,
         saveY:0
       }
     },
+    mixins:[backTopMinxin],
     computed:{
       // 1、tab-control点击的切换传值
       listShow(){
@@ -101,20 +104,29 @@
     methods:{
     // 事件监听相关的方法-------------------
       // 1、BackTop返回顶部事件
-      backClick(){
-        this.$refs.scroll.scrollTo(0,0)
-      },
+      // backClick(){
+      //   this.$refs.scroll.scrollTo(0,0) //放在混入中了
+      // },
+
       //2、设置什么位置显示返回顶部组件
       contentScroll(position){
         // (1)判断back-top是否显示
-        this.isShowBackTop = (-position.y) > 1000
+        // this.isShowBackTop = (-position.y) > HIGH_BACK
+        this.showBackTop(position) //调用刚才抽离的方法
         // （2）判断滚动距离和tabControl的距离顶部距离
         this.istabControlShow = -position.y > this.tabOffsetTop
       },
+
+      // (补充)、关于回到顶部显示按钮（上面代码）,为了出来抽离再创建一个方法（该部分放在混入中）
+      // showBackTop(position){
+      //   this.isShowBackTop = (-position.y) > HIGH_BACK //放在混入中了
+      // },
+
       //3、从scroll组件中接收下拉加载事件
       loadMore(){
         this.getHomeGoods(this.currentType)
       },
+
       //4、用topcontrol点击的index来筛选为相应的pop、new、sell
       itemClick(index){
         switch(index){
@@ -131,6 +143,7 @@
         this.$refs.tabControl1.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
         this.$refs.tabControl2.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
       },
+
       // 5、封装防抖操作（图片每加载一次就刷新高度一次性能不好，此处优化）
       // (此处代码封装到utils.js中了，因为多地方会调用，复用性)
       // debounce(fn,delay){
@@ -144,7 +157,6 @@
       //     },delay)
       //   }
       // },
-
 
       // 6、轮播图图片加载完:获取tab-control的 offsetTop
       swiperImageLoad(){
@@ -168,6 +180,7 @@
           this.goods[type].list.push(...res.data.list)//把每次获取的list数据追加到原来的list数组中
           this.goods[type].page += 1//数据获取来之后要更新相应的页码信息
           this.$refs.scroll.finishPullUp()//每次数据加载完成就调用允许继续下拉加载
+          // console.log(this.goods);
         })
       }
     },

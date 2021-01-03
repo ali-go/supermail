@@ -27,13 +27,16 @@ export function getRecommends() {
 // 1、goods,商品信息的数据获取
 export class Goods {
     constructor(itemInfo, columns, services) {
-        this.title = itemInfo.title; //标题
+        this.title = itemInfo.title; //标题---
         this.newPrice = itemInfo.price; //新价格
         this.oldPrice = itemInfo.oldPrice; //老价格
         this.discountDesc = itemInfo.discountDesc; //折扣活动
         this.descColor = itemInfo.discountBgColor; //折扣活动的背景颜色
         this.columns = columns; //销量、收藏,只取0和1
         this.services = services; //在shopInfo的services的第3索引号对应七天无理由退货
+        this.desc = itemInfo.desc; //描述---
+        this.realPrice = itemInfo.lowPrice; //价格---
+        this.image = services[0].icon; //图片---
     }
 }
 // 2、店铺信息的数据获取
