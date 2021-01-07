@@ -1,10 +1,11 @@
 <template>
   <div class="cart">
     <nav-bar class="nav-bar">
-      <!-- <div slot="center">购物车({{cartLength}})</div> -->
-      <!-- <div slot="center">购物车({{$store.getters.cartLength}})</div> -->
       <div slot="center">购物车({{cartLength}})</div>
     </nav-bar>
+    <cart-list1/>
+    <cart-button-bar class="cart-button-bar"/>
+    <!-- <toast/> -->
   </div>
 </template>
 
@@ -15,10 +16,18 @@
 
   // 2、导入公共组件
   import NavBar from 'components/common/navbar/NavBar.vue'
-  
+  // import Toast from '../../components/common/toast/Toast.vue'
+
+  // 3、导入子组件
+  import  CartList1 from './childComps/CartList1'
+  import CartButtonBar from './childComps/CartButtonBar.vue'
+
   export default {
     components:{
-      NavBar
+      NavBar,
+      CartList1,
+      CartButtonBar,
+      // Toast
     },
     computed:{
       // cartLength(){
@@ -30,8 +39,17 @@
 </script>
 
 <style scoped>
+  .cart{
+    height: 100vh;
+  }
   .nav-bar{
     color: #fff;
     background-color: var(--color-tint);
+  }
+  .cart-button-bar{
+    width: 100%;
+    position: fixed;
+    bottom: 49px;
+    background-color: #eee;
   }
 </style>

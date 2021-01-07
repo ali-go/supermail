@@ -36,7 +36,7 @@ export class Goods {
         this.services = services; //在shopInfo的services的第3索引号对应七天无理由退货
         this.desc = itemInfo.desc; //描述---
         this.realPrice = itemInfo.lowPrice; //价格---
-        this.image = services[0].icon; //图片---
+        this.image = itemInfo.topImages[0]; //图片---
     }
 }
 // 2、店铺信息的数据获取

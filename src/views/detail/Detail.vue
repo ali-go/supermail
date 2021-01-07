@@ -1,7 +1,7 @@
 <template>
   <div class="detail">
     <detail-nav-bar @tabClick="tabClick" ref="navBar"/>
-    <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3" :pull-up-load="true">
+    <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3" >
       <detail-swiper :top-images="topImages" @imageSwiper="imageSwiper" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop"/>
@@ -109,12 +109,14 @@
 
       // 4、对获取offsetTop值进行debounce防抖封装(然后再效果图加载完成处调用)
       this.getThemeTopY = debounce(() => {
-        this.tabOffsetTop=[]
-        this.tabOffsetTop.push(0);//把tabOffsetTop[]赋值为index对应的offsetTop
-        this.tabOffsetTop.push(this.$refs.param.$el.offsetTop)
-        this.tabOffsetTop.push(this.$refs.commend.$el.offsetTop)
-        this.tabOffsetTop.push(this.$refs.recommend.$el.offsetTop)
-        // console.log(this.tabOffsetTop);
+        if((this.$refs.param && this.$refs.commend && this.$refs.recommend)){
+          this.tabOffsetTop=[]
+          this.tabOffsetTop.push(0);//把tabOffsetTop[]赋值为index对应的offsetTop
+          this.tabOffsetTop.push(this.$refs.param.$el.offsetTop)
+          this.tabOffsetTop.push(this.$refs.commend.$el.offsetTop)
+          this.tabOffsetTop.push(this.$refs.recommend.$el.offsetTop)
+          // console.log(this.tabOffsetTop);
+        }
       })
     },
     
@@ -189,9 +191,13 @@
         product.desc = this.goods.desc
         product.realPrice = this.goods.realPrice
         product.id = this.id
+        product.image = this.goods.image
         // console.log(this.id);
 
-        this.$store.dispatch('addCart',product)
+        this.$store.dispatch('addCart',product).then(res => {
+          // console.log(res);
+          this.$toast.isShow(res)
+        })
       },
       // 8、BackTop返回顶部事件
       // backClick(){

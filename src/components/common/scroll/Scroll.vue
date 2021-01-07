@@ -39,8 +39,8 @@
         this.$emit('scroll',position)//把滚动位置传给父组件，用来设置返回顶部事件
       })
         
-        // 3、设置下拉加载事件
-      this.scroll.on('pullingUp',() => {
+        // 3、设置下拉加载事件(pullUpLoad为false时系统不识别pullingUp，此处设置&&防警告)
+      this.pullUpLoad && this.scroll.on('pullingUp',() => {
         // console.log('下拉加载');
         this.$emit('pullingUp')//把上拉加载事件传给父组件
      })
