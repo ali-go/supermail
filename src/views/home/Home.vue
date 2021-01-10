@@ -24,7 +24,7 @@
       <tab-control :titles="['流行','新款','精选']" 
                    @itemClick="itemClick" ref="tabControl2" />
       <!-- 列表图 -->
-      <goods-list :goods="listShow"></goods-list>
+      <goods-list :goods="listShow" ref="goodList"></goods-list>
     </scroll>
     <!-- 返回顶部：组件本身默认不支持原生事件，加native才可绑定原生事件 -->
     <back-top class="back-top" @click.native="backClick" v-show="isShowBackTop"/>
@@ -142,6 +142,8 @@
         }
         this.$refs.tabControl1.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
         this.$refs.tabControl2.currentActive = index //此为设置两个tabcontrol在滚动过程的点击状态一致
+        // console.log(this.$refs.goodList.$el.offsetTop);
+        this.$refs.scroll.scrollTo(0,-this.$refs.goodList.$el.offsetTop,0)
       },
 
       // 5、封装防抖操作（图片每加载一次就刷新高度一次性能不好，此处优化）

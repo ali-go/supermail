@@ -53,9 +53,9 @@ export class Shop {
 
 // 3、店铺尺码信息获取
 export class GoodsParam {
-    constructor(info, rule) {
+    constructor(info, rule = "") {
         this.info = info.set; //一些参数信息
         this.sizes = rule.tables; //尺码信息
-        this.images = info.images ? info.images : ""
+        this.images = info.images ? info.images : "";
     }
 }

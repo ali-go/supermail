@@ -78,7 +78,7 @@
       // console.log(this.id);
       // 2、获取后后台的数据
       getDetail(this.id).then(res => {
-        console.log(res);
+        // console.log(res);
         const data = res.result;
         // (1)、轮播图数据
         this.topImages = data.itemInfo.topImages

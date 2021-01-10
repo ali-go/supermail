@@ -18,6 +18,10 @@
       pullUpLoad:{
         type:Boolean,
         default:false
+      },
+      stopPropagation:{
+        type:Boolean,
+        default:true
       }
     },
     data(){
@@ -30,7 +34,8 @@
       this.scroll = new BScroll(this.$refs.wrapper,{
         click:true,//此次必须设置true不然点击事件无效
         probeType:this.probeType,//设置可以获得滚动位置,由用户决定
-        pullUpLoad:this.pullUpLoad//设置允许下拉加载，由用户决定
+        pullUpLoad:this.pullUpLoad,//设置允许下拉加载，由用户决定
+        stopPropagation:this.stopPropagation,//设置阻止冒泡行为，由用户决定
       })//此处用给元素加ref属性的方式来通过this.$refs来获取元素唯一
 
       // 2、设置滚动事件
